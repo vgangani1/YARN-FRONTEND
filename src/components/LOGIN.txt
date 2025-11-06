@@ -1,0 +1,81 @@
+import React, { useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
+
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (err) {
+      console.error(err);
+      if (err.code === "auth/invalid-credential" || err.code === "auth/wrong-password") {
+        setError("Invalid email or password");
+      } else {
+        setError("Login failed: " + err.message);
+      }
+    }
+  };
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh",
+        fontFamily: "Calibri, sans-serif",
+      }}
+    >
+      <h2>Omkar Filaments</h2>
+      <form
+        onSubmit={handleLogin}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          width: "280px",
+          padding: "25px",
+          border: "1px solid #ccc",
+          borderRadius: "8px",
+          background: "#f9f9f9",
+        }}
+      >
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={{ marginBottom: "12px", padding: "10px", borderRadius: "6px", border: "1px solid #ccc" }}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{ marginBottom: "12px", padding: "10px", borderRadius: "6px", border: "1px solid #ccc" }}
+          required
+        />
+        {error && <p style={{ color: "red", fontSize: "13px" }}>{error}</p>}
+        <button
+          type="submit"
+          style={{
+            padding: "10px",
+            backgroundColor: "#007bff",
+            color: "white",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+          }}
+        >
+          Login
+        </button>
+      </form>
+    </div>
+  );
+}
