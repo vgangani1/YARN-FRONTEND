@@ -2,35 +2,46 @@ import React, { useState } from "react";
 import YarnManager from "./components/YarnManager";
 import Dues from "./components/Dues";
 import logo from "./utils/logo.png";
+import "./App.css";
 
-function App() {
+export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState("yarn");
 
   const handleLogin = (event) => {
     event.preventDefault();
-    const code = event.target.code.value;
+    const code = event.target.code.value.trim();
     if (code === "366336") {
       setIsLoggedIn(true);
     } else {
-      alert("Incorrect Code!");
+      alert("❌ Incorrect Access Code!");
     }
   };
 
+  const handleLogout = () => {
+    if (window.confirm("Are you sure you want to logout?")) {
+      setIsLoggedIn(false);
+    }
+  };
+
+  // 🔹 LOGIN SCREEN
   if (!isLoggedIn) {
     return (
-      <div style={styles.loginContainer}>
-        <div style={styles.loginBox}>
-          <img src={logo} alt="Logo" style={styles.logo} />
+      <div className="loginShell">
+        <div className="loginCard">
+          <img src={logo} alt="Logo" className="logo" />
           <h2>Omkar Yarn Manager</h2>
+          <p style={{ color: "#9aa4b8", marginBottom: "16px" }}>
+            Enter your secure access code
+          </p>
           <form onSubmit={handleLogin}>
             <input
               type="password"
               name="code"
               placeholder="Enter Access Code"
-              style={styles.input}
+              className="input input--full"
             />
-            <button type="submit" style={styles.button}>
+            <button type="submit" className="btn mt-16">
               Login
             </button>
           </form>
@@ -39,87 +50,44 @@ function App() {
     );
   }
 
+  // 🔹 MAIN DASHBOARD
   return (
     <div>
-      <div style={styles.navbar}>
-        <button
-          onClick={() => setActiveTab("yarn")}
-          style={activeTab === "yarn" ? styles.activeTab : styles.tab}
-        >
-          Yarn Manager
-        </button>
-        <button
-          onClick={() => setActiveTab("dues")}
-          style={activeTab === "dues" ? styles.activeTab : styles.tab}
-        >
-          Dues
-        </button>
+      {/* === NAVBAR === */}
+      <div className="topbar">
+        <div className="topbar__inner">
+          <div className="brand-mark"></div>
+          <div className="brand-title">Omkar Yarn Manager</div>
+
+          <div className="spacer"></div>
+
+          <div className="segment">
+            <button
+              onClick={() => setActiveTab("yarn")}
+              className={activeTab === "yarn" ? "active" : ""}
+            >
+              Yarn Manager
+            </button>
+            <button
+              onClick={() => setActiveTab("dues")}
+              className={activeTab === "dues" ? "active" : ""}
+            >
+              Dues
+            </button>
+          </div>
+
+          <div className="spacer"></div>
+
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
       </div>
-      <div style={{ padding: "20px" }}>
+
+      {/* === MAIN PAGE === */}
+      <div className="page">
         {activeTab === "yarn" ? <YarnManager /> : <Dues />}
       </div>
     </div>
   );
 }
-
-const styles = {
-  loginContainer: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    backgroundColor: "#87CEEB",
-  },
-  loginBox: {
-    textAlign: "center",
-    background: "#fff",
-    padding: "40px",
-    borderRadius: "20px",
-    boxShadow: "0px 4px 12px rgba(0,0,0,0.2)",
-  },
-  logo: {
-    width: "120px",
-    marginBottom: "20px",
-  },
-  input: {
-    width: "200px",
-    padding: "10px",
-    margin: "10px 0",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
-  },
-  button: {
-    width: "220px",
-    padding: "10px",
-    borderRadius: "8px",
-    backgroundColor: "#4682B4",
-    color: "white",
-    border: "none",
-    cursor: "pointer",
-  },
-  navbar: {
-    display: "flex",
-    justifyContent: "center",
-    backgroundColor: "#87CEEB",
-    padding: "10px",
-  },
-  tab: {
-    background: "white",
-    border: "1px solid #ccc",
-    padding: "10px 30px",
-    margin: "0 5px",
-    borderRadius: "10px",
-    cursor: "pointer",
-  },
-  activeTab: {
-    background: "#4682B4",
-    color: "white",
-    border: "none",
-    padding: "10px 30px",
-    margin: "0 5px",
-    borderRadius: "10px",
-    cursor: "pointer",
-  },
-};
-
-export default App;
