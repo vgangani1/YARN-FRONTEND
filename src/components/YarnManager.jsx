@@ -1,143 +1,106 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function YarnManager() {
   const [data, setData] = useState([]);
-  const [search, setSearch] = useState("");
-  const [brandFilter, setBrandFilter] = useState("");
-  const [dealerFilter, setDealerFilter] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState("");
+  const [selectedDealer, setSelectedDealer] = useState("");
 
   useEffect(() => {
-    fetch("https://yarn-backend-1.onrender.com/data")
+    fetch("https://yarn-backend-eight.vercel.app/yarn-data")
       .then((res) => res.json())
       .then((data) => setData(data))
       .catch((err) => console.error("Error fetching data:", err));
   }, []);
 
-  const uniqueBrands = [...new Set(data.map((item) => item.BRAND))];
-  const uniqueDealers = [...new Set(data.map((item) => item.DEALER))];
-
+  // Filter logic
   const filteredData = data.filter((item) => {
-    const matchesSearch =
-      item["ITEM NAME"].toLowerCase().includes(search.toLowerCase()) ||
-      item.BRAND.toLowerCase().includes(search.toLowerCase()) ||
-      item.DEALER.toLowerCase().includes(search.toLowerCase()) ||
-      item["SALES MAN"].toLowerCase().includes(search.toLowerCase());
-
-    const matchesBrand = brandFilter ? item.BRAND === brandFilter : true;
-    const matchesDealer = dealerFilter ? item.DEALER === dealerFilter : true;
-
-    return matchesSearch && matchesBrand && matchesDealer;
+    return (
+      (item["ITEM NAME"]?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item["BRAND"]?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item["DEALER"]?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item["SALES MAN"]?.toLowerCase().includes(searchTerm.toLowerCase())) &&
+      (selectedBrand ? item["BRAND"] === selectedBrand : true) &&
+      (selectedDealer ? item["DEALER"] === selectedDealer : true)
+    );
   });
 
-  return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Yarn Company Dashboard</h1>
+  // Unique dropdown values
+  const uniqueBrands = [...new Set(data.map((item) => item["BRAND"]))];
+  const uniqueDealers = [...new Set(data.map((item) => item["DEALER"]))];
 
-      <div style={styles.filters}>
+  return (
+    <div className="table-container">
+      <h2
+        style={{
+          textAlign: "center",
+          color: "#1e3a8a",
+          fontSize: "24px",
+          marginBottom: "20px",
+        }}
+      >
+        Yarn Company Dashboard
+      </h2>
+
+      <div className="filters">
         <input
           type="text"
-          placeholder="🔍 Search anything..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={styles.input}
+          placeholder="Search anything..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
-
         <select
-          value={brandFilter}
-          onChange={(e) => setBrandFilter(e.target.value)}
-          style={styles.select}
+          value={selectedBrand}
+          onChange={(e) => setSelectedBrand(e.target.value)}
         >
           <option value="">Filter by Brand</option>
-          {uniqueBrands.map((brand, i) => (
-            <option key={i} value={brand}>
+          {uniqueBrands.map((brand, index) => (
+            <option key={index} value={brand}>
               {brand}
             </option>
           ))}
         </select>
-
         <select
-          value={dealerFilter}
-          onChange={(e) => setDealerFilter(e.target.value)}
-          style={styles.select}
+          value={selectedDealer}
+          onChange={(e) => setSelectedDealer(e.target.value)}
         >
           <option value="">Filter by Dealer</option>
-          {uniqueDealers.map((dealer, i) => (
-            <option key={i} value={dealer}>
+          {uniqueDealers.map((dealer, index) => (
+            <option key={index} value={dealer}>
               {dealer}
             </option>
           ))}
         </select>
       </div>
 
-      <div style={{ overflowX: "auto" }}>
-        <table style={styles.table}>
-          <thead>
-            <tr>
-              <th>ITEM NAME</th>
-              <th>BRAND</th>
-              <th>DEALER</th>
-              <th>SALES MAN</th>
+      <table>
+        <thead>
+          <tr>
+            <th>ITEM NAME</th>
+            <th>BRAND</th>
+            <th>DEALER</th>
+            <th>SALES MAN</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredData.map((row, index) => (
+            <tr key={index}>
+              <td>{row["ITEM NAME"]}</td>
+              <td>{row["BRAND"]}</td>
+              <td>{row["DEALER"]}</td>
+              <td>{row["SALES MAN"]}</td>
             </tr>
-          </thead>
-          <tbody>
-            {filteredData.map((item, index) => (
-              <tr key={index}>
-                <td>{item["ITEM NAME"]}</td>
-                <td>{item.BRAND}</td>
-                <td>{item.DEALER}</td>
-                <td>{item["SALES MAN"]}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
+
+      {filteredData.length === 0 && (
+        <p style={{ textAlign: "center", color: "#6b7280", marginTop: "20px" }}>
+          No matching results found.
+        </p>
+      )}
     </div>
   );
 }
-
-const styles = {
-  container: {
-    padding: "30px",
-    fontFamily: "Arial, sans-serif",
-    backgroundColor: "#f9f9f9",
-    minHeight: "100vh",
-  },
-  title: {
-    textAlign: "center",
-    color: "#333",
-    marginBottom: "20px",
-  },
-  filters: {
-    display: "flex",
-    justifyContent: "center",
-    gap: "10px",
-    marginBottom: "20px",
-  },
-  input: {
-    padding: "10px",
-    width: "200px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
-  },
-  select: {
-    padding: "10px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
-  },
-  table: {
-    width: "100%",
-    borderCollapse: "collapse",
-    background: "#fff",
-  },
-  th: {
-    background: "#4682B4",
-    color: "white",
-    padding: "10px",
-  },
-  td: {
-    border: "1px solid #ddd",
-    padding: "10px",
-  },
-};
 
 export default YarnManager;
