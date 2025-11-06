@@ -4,18 +4,19 @@ function App() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
+    // Fetching from your Render backend
     fetch("https://yarn-backend-1.onrender.com/data")
       .then((res) => res.json())
       .then((data) => {
-        console.log("Fetched Excel Data:", data);
+        console.log("Fetched data:", data);
         setData(data);
       })
       .catch((err) => console.error("Error fetching data:", err));
   }, []);
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Yarn Data</h1>
+    <div style={{ padding: "20px", fontFamily: "Arial" }}>
+      <h2>Yarn Company Data</h2>
       <table border="1" cellPadding="5">
         <thead>
           <tr>
