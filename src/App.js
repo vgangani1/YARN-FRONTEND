@@ -13,14 +13,11 @@ function App() {
   const [brandFilter, setBrandFilter] = useState("");
   const [dealerFilter, setDealerFilter] = useState("");
 
-  // ✅ Fix: Added safe fetch that avoids CORS preflight
+  // ✅ Fetch data (same backend, safe & simple)
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch("https://yarn-backend-eight.vercel.app/yarn-data", {
-          method: "GET",
-          headers: { "Accept": "application/json" },
-        });
+        const res = await fetch("https://yarn-backend-eight.vercel.app/yarn-data");
         const result = await res.json();
         setData(result);
         setFilteredData(result);
@@ -31,7 +28,7 @@ function App() {
     fetchData();
   }, []);
 
-  // ✅ Fix: Improved filtering (works with “20/1 SD”, “20/1 MONO”, etc.)
+  // ✅ Fix search logic
   useEffect(() => {
     const q = searchQuery.toLowerCase().trim();
     const filtered = data.filter((row) => {
@@ -50,10 +47,10 @@ function App() {
 
   if (!isLoggedIn) {
     return (
-      <div className="login-container">
-        <div className="login-card">
+      <div className="login-page">
+        <div className="login-box">
           <img src={logo} alt="Omkar Filaments" className="login-logo" />
-          <h1>Omkar Yarn Manager</h1>
+          <h2>Omkar Yarn Manager</h2>
           <input
             type="password"
             placeholder="Enter Access Code"
@@ -71,7 +68,7 @@ function App() {
     <div className="app">
       <header className="navbar">
         <div className="navbar-title">Omkar Yarn Manager</div>
-        <div className="navbar-tabs">
+        <div className="navbar-actions">
           <button
             className={activeTab === "yarn" ? "active" : ""}
             onClick={() => setActiveTab("yarn")}
