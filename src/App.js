@@ -175,7 +175,7 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     height: "100vh",
-    background: "#dce5f3", // slightly darker, professional tone
+    background: "#b8c8e8", // darker background blue
   },
   loginBox: {
     textAlign: "center",
@@ -183,7 +183,7 @@ const styles = {
     padding: "50px 60px",
     borderRadius: "14px",
     border: "1px solid #d1d5db",
-    width: "360px",
+    width: "380px",
   },
   logo: {
     width: "110px",
@@ -206,7 +206,7 @@ const styles = {
     background: "#f9fafc",
   },
   button: {
-    width: "100%",
+    width: "100%", // same width as input
     padding: "12px",
     borderRadius: "8px",
     backgroundColor: "#2563eb",
