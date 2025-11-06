@@ -32,13 +32,19 @@ function App() {
       .catch((err) => console.error("Error fetching data:", err));
   }, []);
 
-  // ✅ Filter logic (FIXED: matches partial terms like "20/1 SD" or "20/1 mono")
+  // ✅ Improved Search — supports partial & multi-word match
   const filteredData = data.filter((item) => {
-    const search = searchTerm.toLowerCase().trim();
+    const searchWords = searchTerm.toLowerCase().split(" ").filter(Boolean);
+    const itemText = Object.values(item)
+      .join(" ")
+      .toLowerCase();
+
+    const matchesSearch = searchWords.every((word) =>
+      itemText.includes(word)
+    );
+
     return (
-      Object.values(item).some(
-        (val) => val && val.toString().toLowerCase().includes(search)
-      ) &&
+      matchesSearch &&
       (selectedBrand ? item["BRAND"] === selectedBrand : true) &&
       (selectedDealer ? item["DEALER"] === selectedDealer : true)
     );
@@ -169,7 +175,7 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     height: "100vh",
-    background: "#eaf1f9",
+    background: "#dce5f3", // slightly darker, professional tone
   },
   loginBox: {
     textAlign: "center",
@@ -253,6 +259,10 @@ const styles = {
   },
 
   // --- Table Section ---
+  pageContainer: {
+    background: "#f0f3f8",
+    minHeight: "100vh",
+  },
   tableContainer: {
     background: "#f8fafc",
     padding: "30px",
