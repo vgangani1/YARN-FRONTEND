@@ -13,24 +13,36 @@ function App() {
   const [brandFilter, setBrandFilter] = useState("");
   const [dealerFilter, setDealerFilter] = useState("");
 
-  // ✅ Fetch data (same backend, safe & simple)
+  // ✅ Fixed fetch (correct URL + proper CORS mode)
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch("https://yarn-backend-eight.vercel.app/yarn-data");
+        const res = await fetch("https://yarn-backend-eight.vercel.app/api/yarn-data", {
+          headers: { "Content-Type": "application/json" },
+          mode: "cors",
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
         const result = await res.json();
         setData(result);
         setFilteredData(result);
       } catch (err) {
         console.error("Error fetching data:", err);
+        setData([]);
+        setFilteredData([]);
       }
     };
+
     fetchData();
   }, []);
 
-  // ✅ Fix search logic
+  // ✅ Smart search: “20/1 SD”, “20/1 MONO”, etc. all work
   useEffect(() => {
     const q = searchQuery.toLowerCase().trim();
+
     const filtered = data.filter((row) => {
       const combinedText = Object.values(row).join(" ").toLowerCase();
       return (
@@ -39,12 +51,14 @@ function App() {
         (dealerFilter ? row.DEALER === dealerFilter : true)
       );
     });
+
     setFilteredData(filtered);
   }, [searchQuery, brandFilter, dealerFilter, data]);
 
   const handleLogin = () => setIsLoggedIn(true);
   const handleLogout = () => setIsLoggedIn(false);
 
+  // ✅ Simple, professional login page
   if (!isLoggedIn) {
     return (
       <div className="login-page">
@@ -64,6 +78,7 @@ function App() {
     );
   }
 
+  // ✅ Main dashboard with blue navbar and tab system
   return (
     <div className="app">
       <header className="navbar">
