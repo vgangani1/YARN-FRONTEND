@@ -13,7 +13,7 @@ function App() {
   const [brandFilter, setBrandFilter] = useState("");
   const [dealerFilter, setDealerFilter] = useState("");
 
-  // ✅ Correct fetch URL and safe CORS handling
+  // ✅ Fetch fixed to work with Vercel and your backend
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -40,7 +40,7 @@ function App() {
     fetchData();
   }, []);
 
-  // ✅ Smarter filtering for “20/1 SD”, “20/1 MONO” etc.
+  // ✅ Filter & Search logic (works with 20/1 SD, 20/1 MONO, etc.)
   useEffect(() => {
     const query = searchQuery.toLowerCase().trim();
 
@@ -56,11 +56,11 @@ function App() {
     setFilteredData(filtered);
   }, [searchQuery, brandFilter, dealerFilter, data]);
 
-  // ✅ Simple login logic (no backend auth)
+  // ✅ Login + Logout logic
   const handleLogin = () => setIsLoggedIn(true);
   const handleLogout = () => setIsLoggedIn(false);
 
-  // ✅ LOGIN PAGE UI
+  // ✅ LOGIN PAGE
   if (!isLoggedIn) {
     return (
       <div className="login-page">
@@ -80,7 +80,7 @@ function App() {
     );
   }
 
-  // ✅ DASHBOARD PAGE UI
+  // ✅ DASHBOARD PAGE
   return (
     <div className="app">
       <header className="navbar">
