@@ -1,224 +1,186 @@
-/* ============ Corporate Futuristic Theme ============ */
+/* ========================
+   CLEAN MODERN CORPORATE UI
+======================== */
 
-:root{
-  --bg-start:#0b1220;
-  --bg-end:#141c2f;
-  --card:#0f172a;
-  --glass: rgba(255,255,255,.06);
-  --stroke: rgba(255,255,255,.08);
-  --text:#e6edf3;
-  --muted:#99a3b3;
-  --accent:#388bfd;
-  --accent-2:#6ea8fe;
-  --shadow: 0 10px 30px rgba(0,0,0,.35);
+body {
+  font-family: "Inter", Arial, sans-serif;
+  background-color: #f7f9fb;
+  color: #222;
+  margin: 0;
+  padding: 0;
 }
 
-*{ box-sizing: border-box; }
-html, body, #root{ height:100%; margin:0; }
-body{
-  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  color:var(--text);
-  background: radial-gradient(1200px 700px at 70% -10%, rgba(88,124,255,.12), transparent 60%),
-              radial-gradient(1000px 600px at -10% 0%, rgba(56,139,253,.12), transparent 55%),
-              linear-gradient(180deg, var(--bg-start), var(--bg-end));
-}
-
-/* ===== Top Navbar ===== */
-.topbar{
+/* === NAVBAR === */
+.topbar {
   position: sticky;
-  top:0;
-  z-index: 30;
-  backdrop-filter: blur(10px);
-  background: linear-gradient(180deg, rgba(15,23,42,.85), rgba(15,23,42,.55));
-  border-bottom: 1px solid var(--stroke);
-  box-shadow: var(--shadow);
+  top: 0;
+  z-index: 100;
+  background: linear-gradient(90deg, #0072ff, #00c6ff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-.topbar__inner{
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 14px 20px;
-  display:flex;
-  align-items:center;
-  gap:14px;
+
+.topbar__inner {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 1100px;
 }
-.brand-mark{
-  width:34px; height:34px;
-  border-radius:10px;
-  background: linear-gradient(145deg, var(--accent), var(--accent-2));
-  box-shadow: inset 0 0 0 2px rgba(255,255,255,.15), 0 10px 20px rgba(56,139,253,.25);
-}
-.brand-title{
-  font-weight:700;
-  letter-spacing:.2px;
+
+.brand-title {
   font-size: 18px;
-}
-.spacer{ flex:1; }
-
-.logout-btn{
-  background: linear-gradient(180deg, rgba(239,68,68,.9), rgba(239,68,68,.75));
-  border:0;
-  color:#fff;
-  font-weight:600;
-  padding:10px 16px;
-  border-radius:10px;
-  cursor:pointer;
-  transition: background .2s ease, transform .1s ease;
-  box-shadow:0 4px 10px rgba(239,68,68,.3);
-}
-.logout-btn:hover{
-  background: linear-gradient(180deg, rgba(239,68,68,1), rgba(239,68,68,.9));
-}
-.logout-btn:active{ transform: translateY(1px); }
-
-/* Segmented tabs (Yarn / Dues) */
-.segment{
-  display:inline-flex;
-  padding:4px;
-  gap:4px;
-  border-radius:12px;
-  background: var(--glass);
-  border:1px solid var(--stroke);
-}
-.segment button{
-  min-width:140px;
-  padding:10px 14px;
-  color:var(--muted);
-  background: transparent;
-  border: 0;
-  border-radius:10px;
-  cursor: pointer;
-  font-weight:600;
-}
-.segment button.active{
-  color:#fff;
-  background: linear-gradient(180deg, rgba(56,139,253,.25), rgba(56,139,253,.15));
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.12), 0 6px 16px rgba(56,139,253,.25);
+  font-weight: 700;
+  color: white;
 }
 
-/* ===== Page Container ===== */
-.page{
-  max-width: 1200px;
-  margin: 22px auto 70px;
-  padding: 0 20px;
+.spacer {
+  flex: 1;
 }
 
-/* ===== Card ===== */
-.card{
-  background: rgba(255,255,255,.04);
-  border: 1px solid var(--stroke);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
+.segment {
+  display: flex;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-/* ===== Page Title ===== */
-.page-title{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin:0 0 14px;
-}
-.page-title h1{
-  margin:0;
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing:.2px;
-}
-.page-sub{
-  color:var(--muted);
-  font-size:13px;
+.segment button {
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease;
 }
 
-/* ===== Toolbar (search + filters) ===== */
-.toolbar{
-  display:flex;
-  gap:10px;
-  flex-wrap: wrap;
-  padding: 14px;
-  border-bottom: 1px solid var(--stroke);
-  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+.segment button.active {
+  background: white;
+  color: #0072ff;
 }
-.input, .select{
-  background: rgba(255,255,255,.06);
-  border:1px solid var(--stroke);
-  color:var(--text);
-  padding: 11px 12px;
+
+.logout-btn {
+  background: #ff4d4f;
+  border: none;
+  color: white;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.logout-btn:hover {
+  background: #e63946;
+}
+
+/* === PAGE CONTAINER === */
+.page {
+  max-width: 1100px;
+  margin: 40px auto;
+  background: white;
+  padding: 25px;
   border-radius: 10px;
-  outline:none;
-  min-width: 220px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
-.input::placeholder{ color: #b9c2d2; }
-.select{ min-width: 200px; }
 
-/* ===== Data Table ===== */
-.table-wrap{
-  overflow:auto;
+/* === TABLE === */
+.table-wrap {
+  overflow-x: auto;
+  margin-top: 15px;
 }
-.table{
-  width:100%;
+
+.table {
+  width: 100%;
   border-collapse: collapse;
-  min-width: 920px;
 }
-.table thead th{
-  text-align:left;
-  font-size: 12px;
+
+.table thead th {
+  background: #0072ff;
+  color: white;
+  text-align: left;
+  padding: 10px;
+  font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: .08em;
-  color: var(--muted);
-  padding: 14px 14px;
-  background: rgba(255,255,255,.035);
-  position: sticky; top:0;
-  border-bottom:1px solid var(--stroke);
-}
-.table tbody td{
-  padding: 12px 14px;
-  border-bottom:1px solid rgba(255,255,255,.06);
-}
-.table tbody tr{
-  transition: background .2s ease, transform .08s ease;
-}
-.table tbody tr:nth-child(odd){
-  background: rgba(255,255,255,.02);
-}
-.table tbody tr:hover{
-  background: rgba(56,139,253,.08);
 }
 
-/* ===== Login ===== */
-.loginShell{
-  min-height: calc(100vh - 64px);
-  display:grid;
-  place-items: center;
+.table tbody td {
+  padding: 10px;
+  border-bottom: 1px solid #eaeaea;
 }
-.loginCard{
-  width: 360px;
-  background: rgba(255,255,255,.05);
-  border:1px solid var(--stroke);
-  border-radius: 16px;
-  padding: 28px;
-  text-align:center;
-  box-shadow: var(--shadow);
-}
-.logo{
-  width:72px; height:72px;
-  margin: 4px auto 12px;
-  border-radius: 16px;
-  box-shadow: 0 10px 22px rgba(56,139,253,.25);
-}
-.input--full{ width:100%; }
-.btn{
-  display:inline-flex; align-items:center; justify-content:center;
-  padding: 12px 14px;
-  gap:8px;
-  border-radius: 10px;
-  border:0;
-  cursor:pointer;
-  font-weight:700;
-  background: linear-gradient(180deg, var(--accent), var(--accent-2));
-  color: #fff;
-  box-shadow: 0 8px 18px rgba(56,139,253,.35);
-}
-.btn:active{ transform: translateY(1px); }
 
-/* Utility */
-.mt-16{ margin-top: 16px; }
+.table tbody tr:nth-child(odd) {
+  background-color: #f9fcff;
+}
+
+/* === SEARCH BAR + BUTTON === */
+.toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.input {
+  flex: 1;
+  min-width: 220px;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.btn {
+  background: linear-gradient(90deg, #0072ff, #00c6ff);
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn:hover {
+  background: linear-gradient(90deg, #0061d5, #00aaff);
+}
+
+/* === LOGIN SCREEN === */
+.loginShell {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(120deg, #0072ff, #00c6ff);
+}
+
+.loginCard {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  width: 320px;
+}
+
+.loginCard h2 {
+  margin-bottom: 15px;
+  color: #0072ff;
+}
+
+.input--full {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.btn.login-btn {
+  width: 100%;
+  background: linear-gradient(90deg, #0072ff, #00c6ff);
+}
