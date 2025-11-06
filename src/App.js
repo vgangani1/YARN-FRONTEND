@@ -13,24 +13,25 @@ function App() {
   const [brandFilter, setBrandFilter] = useState("");
   const [dealerFilter, setDealerFilter] = useState("");
 
-  // ✅ Fixed fetch (correct URL + proper CORS mode)
+  // ✅ Correct fetch URL and safe CORS handling
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch("https://yarn-backend-eight.vercel.app/api/yarn-data", {
-          headers: { "Content-Type": "application/json" },
-          mode: "cors",
-        });
+        const response = await fetch(
+          "https://yarn-backend-eight.vercel.app/api/yarn-data",
+          {
+            headers: { "Content-Type": "application/json" },
+            mode: "cors",
+          }
+        );
 
-        if (!res.ok) {
-          throw new Error("Failed to fetch data");
-        }
+        if (!response.ok) throw new Error("Failed to fetch data");
 
-        const result = await res.json();
+        const result = await response.json();
         setData(result);
         setFilteredData(result);
-      } catch (err) {
-        console.error("Error fetching data:", err);
+      } catch (error) {
+        console.error("Error fetching data:", error);
         setData([]);
         setFilteredData([]);
       }
@@ -39,14 +40,14 @@ function App() {
     fetchData();
   }, []);
 
-  // ✅ Smart search: “20/1 SD”, “20/1 MONO”, etc. all work
+  // ✅ Smarter filtering for “20/1 SD”, “20/1 MONO” etc.
   useEffect(() => {
-    const q = searchQuery.toLowerCase().trim();
+    const query = searchQuery.toLowerCase().trim();
 
     const filtered = data.filter((row) => {
       const combinedText = Object.values(row).join(" ").toLowerCase();
       return (
-        combinedText.includes(q) &&
+        combinedText.includes(query) &&
         (brandFilter ? row.BRAND === brandFilter : true) &&
         (dealerFilter ? row.DEALER === dealerFilter : true)
       );
@@ -55,10 +56,11 @@ function App() {
     setFilteredData(filtered);
   }, [searchQuery, brandFilter, dealerFilter, data]);
 
+  // ✅ Simple login logic (no backend auth)
   const handleLogin = () => setIsLoggedIn(true);
   const handleLogout = () => setIsLoggedIn(false);
 
-  // ✅ Simple, professional login page
+  // ✅ LOGIN PAGE UI
   if (!isLoggedIn) {
     return (
       <div className="login-page">
@@ -78,7 +80,7 @@ function App() {
     );
   }
 
-  // ✅ Main dashboard with blue navbar and tab system
+  // ✅ DASHBOARD PAGE UI
   return (
     <div className="app">
       <header className="navbar">
