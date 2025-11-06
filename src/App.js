@@ -1,92 +1,53 @@
-import React, { useState, useEffect } from "react";
-import YarnManager from "./components/YarnManager.jsx";
-import Dues from "./components/Dues.jsx";
-import logo from "./utils/logo.png";
+import React, { useEffect, useState } from "react";
+import YarnManager from "./components/YarnManager";
+import Dues from "./components/Dues";
 import "./App.css";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(true);
   const [activeTab, setActiveTab] = useState("yarn");
   const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [brandFilter, setBrandFilter] = useState("");
   const [dealerFilter, setDealerFilter] = useState("");
 
-  // ✅ Fetch fixed to handle CORS + JSON path correctly
+  // ✅ Fetch Excel data from backend
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "https://yarn-backend-eight.vercel.app/api/yarn-data",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
+        const response = await fetch("https://yarn-backend-eight.vercel.app/yarn-data");
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const result = await response.json();
         setData(result);
-        setFilteredData(result);
-      } catch (error) {
-        console.error("❌ Error fetching data:", error);
-        setData([]);
-        setFilteredData([]);
+      } catch (err) {
+        console.error("Error fetching data:", err);
       }
     };
-
     fetchData();
   }, []);
 
-  // ✅ Fixes search (matches “20/1 SD” or “20/1 MONO” properly)
-  useEffect(() => {
-    const query = searchQuery.toLowerCase().trim();
+  // ✅ Filter data for search and dropdown
+  const filteredData = data.filter((item) => {
+    const itemName = item["ITEM NAME"]?.toLowerCase() || "";
+    const brand = item.BRAND?.toLowerCase() || "";
+    const dealer = item.DEALER?.toLowerCase() || "";
 
-    const filtered = data.filter((row) => {
-      const combined = Object.values(row).join(" ").toLowerCase();
-      return (
-        combined.includes(query) &&
-        (brandFilter ? row.BRAND === brandFilter : true) &&
-        (dealerFilter ? row.DEALER === dealerFilter : true)
-      );
-    });
+    const matchesSearch =
+      itemName.includes(searchQuery.toLowerCase()) ||
+      brand.includes(searchQuery.toLowerCase()) ||
+      dealer.includes(searchQuery.toLowerCase());
 
-    setFilteredData(filtered);
-  }, [searchQuery, brandFilter, dealerFilter, data]);
+    const matchesBrand = brandFilter ? brand === brandFilter.toLowerCase() : true;
+    const matchesDealer = dealerFilter ? dealer === dealerFilter.toLowerCase() : true;
 
-  const handleLogin = () => setIsLoggedIn(true);
-  const handleLogout = () => setIsLoggedIn(false);
-
-  if (!isLoggedIn) {
-    return (
-      <div className="login-page">
-        <div className="login-box">
-          <img src={logo} alt="Omkar Filaments" className="login-logo" />
-          <h2>Omkar Yarn Manager</h2>
-          <input
-            type="password"
-            placeholder="Enter Access Code"
-            className="login-input"
-          />
-          <button onClick={handleLogin} className="login-button">
-            Login
-          </button>
-        </div>
-      </div>
-    );
-  }
+    return matchesSearch && matchesBrand && matchesDealer;
+  });
 
   return (
-    <div className="app">
-      <header className="navbar">
-        <div className="navbar-title">Omkar Yarn Manager</div>
-        <div className="navbar-actions">
+    <div className="App">
+      <nav className="navbar">
+        <h1 className="nav-title">Omkar Yarn Manager</h1>
+        <div className="nav-buttons">
           <button
             className={activeTab === "yarn" ? "active" : ""}
             onClick={() => setActiveTab("yarn")}
@@ -99,14 +60,14 @@ function App() {
           >
             Dues
           </button>
-          <button className="logout" onClick={handleLogout}>
+          <button className="logout-btn" onClick={() => setLoggedIn(false)}>
             Logout
           </button>
         </div>
-      </header>
+      </nav>
 
       <main className="content">
-        {activeTab === "yarn" && (
+        {activeTab === "yarn" ? (
           <YarnManager
             data={filteredData}
             searchQuery={searchQuery}
@@ -116,8 +77,9 @@ function App() {
             dealerFilter={dealerFilter}
             setDealerFilter={setDealerFilter}
           />
+        ) : (
+          <Dues />
         )}
-        {activeTab === "dues" && <Dues />}
       </main>
     </div>
   );
