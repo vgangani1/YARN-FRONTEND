@@ -1,12 +1,15 @@
-import React, { useState } from "react";
-import YarnManager from "./components/YarnManager";
-import Dues from "./components/Dues";
+import React, { useState, useEffect } from "react";
 import logo from "./utils/logo.png";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [data, setData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState("");
+  const [selectedDealer, setSelectedDealer] = useState("");
   const [activeTab, setActiveTab] = useState("yarn");
 
+  // ✅ Login handler
   const handleLogin = (event) => {
     event.preventDefault();
     const code = event.target.code.value;
@@ -21,17 +24,42 @@ function App() {
     setIsLoggedIn(false);
   };
 
+  // ✅ Fetch Excel data from backend
+  useEffect(() => {
+    fetch("https://yarn-backend-eight.vercel.app/yarn-data")
+      .then((res) => res.json())
+      .then((data) => setData(data))
+      .catch((err) => console.error("Error fetching data:", err));
+  }, []);
+
+  // ✅ Filter logic (FIXED: matches partial terms like "20/1 SD" or "20/1 mono")
+  const filteredData = data.filter((item) => {
+    const search = searchTerm.toLowerCase().trim();
+    return (
+      Object.values(item).some(
+        (val) => val && val.toString().toLowerCase().includes(search)
+      ) &&
+      (selectedBrand ? item["BRAND"] === selectedBrand : true) &&
+      (selectedDealer ? item["DEALER"] === selectedDealer : true)
+    );
+  });
+
+  // Dropdowns
+  const uniqueBrands = [...new Set(data.map((item) => item["BRAND"]))];
+  const uniqueDealers = [...new Set(data.map((item) => item["DEALER"]))];
+
+  // ✅ Login Page
   if (!isLoggedIn) {
     return (
       <div style={styles.loginContainer}>
         <div style={styles.loginBox}>
-          <img src={logo} alt="Logo" style={styles.logo} />
-          <h2>Omkar Yarn Manager</h2>
+          <img src={logo} alt="Omkar Logo" style={styles.logo} />
+          <h2 style={styles.title}>Omkar Yarn Manager</h2>
           <form onSubmit={handleLogin}>
             <input
               type="password"
               name="code"
-              placeholder="Enter Access Code"
+              placeholder="Enter access code"
               style={styles.input}
             />
             <button type="submit" style={styles.button}>
@@ -43,15 +71,12 @@ function App() {
     );
   }
 
+  // ✅ Dashboard Page
   return (
-    <div style={{ backgroundColor: "#f9fafc", minHeight: "100vh" }}>
+    <div style={styles.pageContainer}>
       <div style={styles.navbar}>
-        <div style={styles.navLeft}>
-          <img src={logo} alt="Logo" style={styles.navLogo} />
-          <span style={styles.navTitle}>Omkar Yarn Manager</span>
-        </div>
-
-        <div style={styles.navTabs}>
+        <h3 style={styles.navTitle}>Omkar Yarn Manager</h3>
+        <div>
           <button
             onClick={() => setActiveTab("yarn")}
             style={activeTab === "yarn" ? styles.activeTab : styles.tab}
@@ -60,115 +85,212 @@ function App() {
           </button>
           <button
             onClick={() => setActiveTab("dues")}
-            style={activeTab === "dues" ? styles.activeTab : styles.tab}
+            style={activeTab === "dues" ? styles.tab : styles.tab}
           >
             Dues
           </button>
+          <button onClick={handleLogout} style={styles.logoutButton}>
+            Logout
+          </button>
         </div>
-
-        <button onClick={handleLogout} style={styles.logout}>
-          Logout
-        </button>
       </div>
 
-      <div style={{ padding: "20px" }}>
-        {activeTab === "yarn" ? <YarnManager /> : <Dues />}
+      <div style={styles.tableContainer}>
+        <h2 style={styles.pageTitle}>Yarn Company Dashboard</h2>
+
+        <div style={styles.filters}>
+          <input
+            type="text"
+            placeholder="Search anything..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={styles.searchInput}
+          />
+          <select
+            value={selectedBrand}
+            onChange={(e) => setSelectedBrand(e.target.value)}
+            style={styles.dropdown}
+          >
+            <option value="">Filter by Brand</option>
+            {uniqueBrands.map((brand, i) => (
+              <option key={i} value={brand}>
+                {brand}
+              </option>
+            ))}
+          </select>
+          <select
+            value={selectedDealer}
+            onChange={(e) => setSelectedDealer(e.target.value)}
+            style={styles.dropdown}
+          >
+            <option value="">Filter by Dealer</option>
+            {uniqueDealers.map((dealer, i) => (
+              <option key={i} value={dealer}>
+                {dealer}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <table style={styles.table}>
+          <thead>
+            <tr>
+              <th>ITEM NAME</th>
+              <th>BRAND</th>
+              <th>DEALER</th>
+              <th>SALES MAN</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredData.map((row, index) => (
+              <tr key={index}>
+                <td>{row["ITEM NAME"]}</td>
+                <td>{row["BRAND"]}</td>
+                <td>{row["DEALER"]}</td>
+                <td>{row["SALES MAN"]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {filteredData.length === 0 && (
+          <p style={styles.noResults}>No matching results found.</p>
+        )}
       </div>
     </div>
   );
 }
 
+// ✅ Styles
 const styles = {
-  // Login Page
+  // --- Login Page ---
   loginContainer: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     height: "100vh",
-    background: "linear-gradient(to right, #1e3a8a, #3b82f6)",
+    background: "#eaf1f9",
   },
   loginBox: {
     textAlign: "center",
     background: "#fff",
-    padding: "40px",
-    borderRadius: "20px",
-    boxShadow: "0px 4px 12px rgba(0,0,0,0.2)",
-    width: "320px",
+    padding: "50px 60px",
+    borderRadius: "14px",
+    border: "1px solid #d1d5db",
+    width: "360px",
   },
   logo: {
-    width: "120px",
+    width: "110px",
     marginBottom: "20px",
+  },
+  title: {
+    fontSize: "24px",
+    fontWeight: "600",
+    marginBottom: "25px",
+    color: "#1e3a8a",
   },
   input: {
     width: "100%",
-    padding: "10px",
-    margin: "10px 0",
+    padding: "12px",
+    marginBottom: "20px",
+    border: "1px solid #cbd5e1",
     borderRadius: "8px",
-    border: "1px solid #ccc",
+    outline: "none",
+    fontSize: "15px",
+    background: "#f9fafc",
   },
   button: {
     width: "100%",
-    padding: "10px",
+    padding: "12px",
     borderRadius: "8px",
     backgroundColor: "#2563eb",
-    color: "white",
+    color: "#fff",
     border: "none",
-    cursor: "pointer",
     fontWeight: "600",
+    cursor: "pointer",
+    fontSize: "15px",
   },
 
-  // Navbar
+  // --- Navbar ---
   navbar: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#2563eb",
-    color: "white",
-    padding: "10px 20px",
-    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-  },
-  navLeft: {
-    display: "flex",
-    alignItems: "center",
-  },
-  navLogo: {
-    width: "40px",
-    height: "40px",
-    marginRight: "10px",
+    backgroundColor: "#1e3a8a",
+    color: "#fff",
+    padding: "12px 40px",
   },
   navTitle: {
-    fontSize: "18px",
     fontWeight: "600",
-  },
-  navTabs: {
-    display: "flex",
-    gap: "10px",
+    fontSize: "18px",
   },
   tab: {
-    backgroundColor: "transparent",
-    border: "1px solid white",
-    color: "white",
+    background: "#3b82f6",
+    color: "#fff",
+    border: "none",
     borderRadius: "6px",
-    padding: "6px 14px",
+    padding: "8px 16px",
+    marginLeft: "10px",
     cursor: "pointer",
   },
   activeTab: {
-    backgroundColor: "white",
-    color: "#2563eb",
+    background: "#60a5fa",
+    color: "#fff",
     border: "none",
     borderRadius: "6px",
-    padding: "6px 14px",
+    padding: "8px 16px",
+    marginLeft: "10px",
     cursor: "pointer",
-    fontWeight: "600",
   },
-  logout: {
-    backgroundColor: "#ef4444",
+  logoutButton: {
+    background: "#ef4444",
+    color: "#fff",
     border: "none",
-    color: "white",
-    padding: "6px 14px",
     borderRadius: "6px",
+    padding: "8px 16px",
+    marginLeft: "10px",
     cursor: "pointer",
-    fontWeight: "600",
+  },
+
+  // --- Table Section ---
+  tableContainer: {
+    background: "#f8fafc",
+    padding: "30px",
+    borderRadius: "12px",
+    margin: "30px auto",
+    width: "90%",
+  },
+  pageTitle: {
+    textAlign: "center",
+    marginBottom: "20px",
+    color: "#1e3a8a",
+  },
+  filters: {
+    display: "flex",
+    justifyContent: "center",
+    gap: "10px",
+    marginBottom: "20px",
+  },
+  searchInput: {
+    width: "220px",
+    padding: "8px",
+    borderRadius: "6px",
+    border: "1px solid #d1d5db",
+  },
+  dropdown: {
+    padding: "8px",
+    borderRadius: "6px",
+    border: "1px solid #d1d5db",
+  },
+  table: {
+    width: "100%",
+    borderCollapse: "collapse",
+    background: "#fff",
+  },
+  noResults: {
+    textAlign: "center",
+    color: "#6b7280",
+    marginTop: "20px",
   },
 };
 
