@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import YarnManager from "./components/YarnManager";
-import Dues from "./components/Dues";
+import React, { useState, useEffect } from "react";
+import YarnManager from "./components/YarnManager.jsx";
+import Dues from "./components/Dues.jsx";
 import logo from "./utils/logo.png";
 import "./App.css";
 
@@ -13,25 +13,29 @@ function App() {
   const [brandFilter, setBrandFilter] = useState("");
   const [dealerFilter, setDealerFilter] = useState("");
 
-  // ✅ Fetch fixed to work with Vercel and your backend
+  // ✅ Fetch fixed to handle CORS + JSON path correctly
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
           "https://yarn-backend-eight.vercel.app/api/yarn-data",
           {
-            headers: { "Content-Type": "application/json" },
-            mode: "cors",
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
           }
         );
 
-        if (!response.ok) throw new Error("Failed to fetch data");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
         const result = await response.json();
         setData(result);
         setFilteredData(result);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("❌ Error fetching data:", error);
         setData([]);
         setFilteredData([]);
       }
@@ -40,14 +44,14 @@ function App() {
     fetchData();
   }, []);
 
-  // ✅ Filter & Search logic (works with 20/1 SD, 20/1 MONO, etc.)
+  // ✅ Fixes search (matches “20/1 SD” or “20/1 MONO” properly)
   useEffect(() => {
     const query = searchQuery.toLowerCase().trim();
 
     const filtered = data.filter((row) => {
-      const combinedText = Object.values(row).join(" ").toLowerCase();
+      const combined = Object.values(row).join(" ").toLowerCase();
       return (
-        combinedText.includes(query) &&
+        combined.includes(query) &&
         (brandFilter ? row.BRAND === brandFilter : true) &&
         (dealerFilter ? row.DEALER === dealerFilter : true)
       );
@@ -56,11 +60,9 @@ function App() {
     setFilteredData(filtered);
   }, [searchQuery, brandFilter, dealerFilter, data]);
 
-  // ✅ Login + Logout logic
   const handleLogin = () => setIsLoggedIn(true);
   const handleLogout = () => setIsLoggedIn(false);
 
-  // ✅ LOGIN PAGE
   if (!isLoggedIn) {
     return (
       <div className="login-page">
@@ -80,7 +82,6 @@ function App() {
     );
   }
 
-  // ✅ DASHBOARD PAGE
   return (
     <div className="app">
       <header className="navbar">
