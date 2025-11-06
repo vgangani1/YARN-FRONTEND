@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import YarnManager from "./components/YarnManager";
 import Dues from "./components/Dues";
 import logo from "./utils/logo.png";
-import yarnBackground from "./utils/yarn-bg.jpg"; // background image
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -22,106 +21,21 @@ function App() {
     setIsLoggedIn(false);
   };
 
-  // -------------------------
-  // LOGIN PAGE DESIGN
-  // -------------------------
   if (!isLoggedIn) {
     return (
-      <div
-        style={{
-          height: "100vh",
-          width: "100vw",
-          backgroundImage: `url(${yarnBackground})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          position: "relative",
-          fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-        }}
-      >
-        {/* overlay to soften background */}
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.4)",
-          }}
-        ></div>
-
-        {/* login card */}
-        <div
-          style={{
-            position: "relative",
-            backgroundColor: "rgba(255, 255, 255, 0.95)",
-            borderRadius: "16px",
-            padding: "50px 40px",
-            width: "380px",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-            textAlign: "center",
-          }}
-        >
-          <img
-            src={logo}
-            alt="Logo"
-            style={{ width: "90px", marginBottom: "20px" }}
-          />
-          <h2
-            style={{
-              color: "#1E3A8A",
-              marginBottom: "10px",
-              fontWeight: "700",
-            }}
-          >
-            Omkar Yarn Manager
-          </h2>
-          <p
-            style={{
-              color: "#6B7280",
-              marginBottom: "25px",
-              fontSize: "14px",
-            }}
-          >
-            Enter your secure access code to continue
-          </p>
+      <div style={styles.loginContainer}>
+        <div style={styles.loginBox}>
+          <img src={logo} alt="Logo" style={styles.logo} />
+          <h2>Omkar Yarn Manager</h2>
           <form onSubmit={handleLogin}>
             <input
               type="password"
               name="code"
               placeholder="Enter Access Code"
-              style={{
-                width: "100%",
-                padding: "12px",
-                borderRadius: "8px",
-                border: "1px solid #D1D5DB",
-                textAlign: "center",
-                fontSize: "15px",
-                marginBottom: "20px",
-                outline: "none",
-              }}
+              style={styles.input}
             />
-            <button
-              type="submit"
-              style={{
-                width: "100%",
-                padding: "12px",
-                borderRadius: "8px",
-                backgroundColor: "#2563EB",
-                color: "white",
-                border: "none",
-                cursor: "pointer",
-                fontWeight: "600",
-                fontSize: "15px",
-                transition: "0.3s",
-              }}
-              onMouseOver={(e) => (e.target.style.backgroundColor = "#1D4ED8")}
-              onMouseOut={(e) => (e.target.style.backgroundColor = "#2563EB")}
-            >
-              Enter
+            <button type="submit" style={styles.button}>
+              Login
             </button>
           </form>
         </div>
@@ -129,94 +43,133 @@ function App() {
     );
   }
 
-  // -------------------------
-  // MAIN DASHBOARD
-  // -------------------------
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "#f9fafc",
-        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-      }}
-    >
-      {/* Top Navbar */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "10px 30px",
-          background: "linear-gradient(to right, #2563EB, #1E40AF)",
-          color: "white",
-          boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <img
-            src={logo}
-            alt="Logo"
-            style={{ width: "35px", borderRadius: "50%" }}
-          />
-          <h2 style={{ fontSize: "18px", fontWeight: "600" }}>
-            Omkar Yarn Manager
-          </h2>
+    <div style={{ backgroundColor: "#f9fafc", minHeight: "100vh" }}>
+      <div style={styles.navbar}>
+        <div style={styles.navLeft}>
+          <img src={logo} alt="Logo" style={styles.navLogo} />
+          <span style={styles.navTitle}>Omkar Yarn Manager</span>
         </div>
 
-        <div>
+        <div style={styles.navTabs}>
           <button
             onClick={() => setActiveTab("yarn")}
-            style={{
-              backgroundColor:
-                activeTab === "yarn" ? "rgba(255,255,255,0.2)" : "transparent",
-              color: "white",
-              border: "none",
-              padding: "8px 16px",
-              borderRadius: "6px",
-              cursor: "pointer",
-              marginRight: "10px",
-            }}
+            style={activeTab === "yarn" ? styles.activeTab : styles.tab}
           >
             Yarn Manager
           </button>
           <button
             onClick={() => setActiveTab("dues")}
-            style={{
-              backgroundColor:
-                activeTab === "dues" ? "rgba(255,255,255,0.2)" : "transparent",
-              color: "white",
-              border: "none",
-              padding: "8px 16px",
-              borderRadius: "6px",
-              cursor: "pointer",
-              marginRight: "20px",
-            }}
+            style={activeTab === "dues" ? styles.activeTab : styles.tab}
           >
             Dues
           </button>
-          <button
-            onClick={handleLogout}
-            style={{
-              backgroundColor: "#DC2626",
-              border: "none",
-              padding: "8px 18px",
-              borderRadius: "8px",
-              color: "white",
-              cursor: "pointer",
-              fontWeight: "600",
-            }}
-          >
-            Logout
-          </button>
         </div>
+
+        <button onClick={handleLogout} style={styles.logout}>
+          Logout
+        </button>
       </div>
 
-      {/* Main Page Section */}
-      <div style={{ padding: "30px" }}>
+      <div style={{ padding: "20px" }}>
         {activeTab === "yarn" ? <YarnManager /> : <Dues />}
       </div>
     </div>
   );
 }
+
+const styles = {
+  // Login Page
+  loginContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
+    background: "linear-gradient(to right, #1e3a8a, #3b82f6)",
+  },
+  loginBox: {
+    textAlign: "center",
+    background: "#fff",
+    padding: "40px",
+    borderRadius: "20px",
+    boxShadow: "0px 4px 12px rgba(0,0,0,0.2)",
+    width: "320px",
+  },
+  logo: {
+    width: "120px",
+    marginBottom: "20px",
+  },
+  input: {
+    width: "100%",
+    padding: "10px",
+    margin: "10px 0",
+    borderRadius: "8px",
+    border: "1px solid #ccc",
+  },
+  button: {
+    width: "100%",
+    padding: "10px",
+    borderRadius: "8px",
+    backgroundColor: "#2563eb",
+    color: "white",
+    border: "none",
+    cursor: "pointer",
+    fontWeight: "600",
+  },
+
+  // Navbar
+  navbar: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#2563eb",
+    color: "white",
+    padding: "10px 20px",
+    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+  },
+  navLeft: {
+    display: "flex",
+    alignItems: "center",
+  },
+  navLogo: {
+    width: "40px",
+    height: "40px",
+    marginRight: "10px",
+  },
+  navTitle: {
+    fontSize: "18px",
+    fontWeight: "600",
+  },
+  navTabs: {
+    display: "flex",
+    gap: "10px",
+  },
+  tab: {
+    backgroundColor: "transparent",
+    border: "1px solid white",
+    color: "white",
+    borderRadius: "6px",
+    padding: "6px 14px",
+    cursor: "pointer",
+  },
+  activeTab: {
+    backgroundColor: "white",
+    color: "#2563eb",
+    border: "none",
+    borderRadius: "6px",
+    padding: "6px 14px",
+    cursor: "pointer",
+    fontWeight: "600",
+  },
+  logout: {
+    backgroundColor: "#ef4444",
+    border: "none",
+    color: "white",
+    padding: "6px 14px",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontWeight: "600",
+  },
+};
 
 export default App;
