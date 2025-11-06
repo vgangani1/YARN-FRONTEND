@@ -1,88 +1,93 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import YarnManager from "./components/YarnManager";
 import Dues from "./components/Dues";
+import logo from "./utils/logo.png";
 import "./App.css";
 
-function App() {
-  const [loggedIn, setLoggedIn] = useState(true);
+export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState("yarn");
-  const [data, setData] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [brandFilter, setBrandFilter] = useState("");
-  const [dealerFilter, setDealerFilter] = useState("");
 
-  // ✅ Fetch Excel data from backend
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("https://yarn-backend-eight.vercel.app/yarn-data");
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const result = await response.json();
-        setData(result);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-      }
-    };
-    fetchData();
-  }, []);
+  const handleLogin = (event) => {
+    event.preventDefault();
+    const code = event.target.code.value.trim();
+    if (code === "366336") {
+      setIsLoggedIn(true);
+    } else {
+      alert("❌ Incorrect Access Code!");
+    }
+  };
 
-  // ✅ Filter data for search and dropdown
-  const filteredData = data.filter((item) => {
-    const itemName = item["ITEM NAME"]?.toLowerCase() || "";
-    const brand = item.BRAND?.toLowerCase() || "";
-    const dealer = item.DEALER?.toLowerCase() || "";
+  const handleLogout = () => {
+    if (window.confirm("Are you sure you want to logout?")) {
+      setIsLoggedIn(false);
+    }
+  };
 
-    const matchesSearch =
-      itemName.includes(searchQuery.toLowerCase()) ||
-      brand.includes(searchQuery.toLowerCase()) ||
-      dealer.includes(searchQuery.toLowerCase());
+  // 🔹 LOGIN SCREEN
+  if (!isLoggedIn) {
+    return (
+      <div className="loginShell">
+        <div className="loginCard">
+          <img src={logo} alt="Logo" className="logo" />
+          <h2>Omkar Yarn Manager</h2>
+          <p style={{ color: "#9aa4b8", marginBottom: "16px" }}>
+            Enter your secure access code
+          </p>
+          <form onSubmit={handleLogin}>
+            <input
+              type="password"
+              name="code"
+              placeholder="Enter Access Code"
+              className="input input--full"
+            />
+            <button type="submit" className="btn mt-16">
+              Login
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
-    const matchesBrand = brandFilter ? brand === brandFilter.toLowerCase() : true;
-    const matchesDealer = dealerFilter ? dealer === dealerFilter.toLowerCase() : true;
-
-    return matchesSearch && matchesBrand && matchesDealer;
-  });
-
+  // 🔹 MAIN DASHBOARD
   return (
-    <div className="App">
-      <nav className="navbar">
-        <h1 className="nav-title">Omkar Yarn Manager</h1>
-        <div className="nav-buttons">
-          <button
-            className={activeTab === "yarn" ? "active" : ""}
-            onClick={() => setActiveTab("yarn")}
-          >
-            Yarn Manager
-          </button>
-          <button
-            className={activeTab === "dues" ? "active" : ""}
-            onClick={() => setActiveTab("dues")}
-          >
-            Dues
-          </button>
-          <button className="logout-btn" onClick={() => setLoggedIn(false)}>
+    <div>
+      {/* === NAVBAR === */}
+      <div className="topbar">
+        <div className="topbar__inner">
+          <div className="brand-mark"></div>
+          <div className="brand-title">Omkar Yarn Manager</div>
+
+          <div className="spacer"></div>
+
+          <div className="segment">
+            <button
+              onClick={() => setActiveTab("yarn")}
+              className={activeTab === "yarn" ? "active" : ""}
+            >
+              Yarn Manager
+            </button>
+            <button
+              onClick={() => setActiveTab("dues")}
+              className={activeTab === "dues" ? "active" : ""}
+            >
+              Dues
+            </button>
+          </div>
+
+          <div className="spacer"></div>
+
+          <button className="logout-btn" onClick={handleLogout}>
             Logout
           </button>
         </div>
-      </nav>
+      </div>
 
-      <main className="content">
-        {activeTab === "yarn" ? (
-          <YarnManager
-            data={filteredData}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            brandFilter={brandFilter}
-            setBrandFilter={setBrandFilter}
-            dealerFilter={dealerFilter}
-            setDealerFilter={setDealerFilter}
-          />
-        ) : (
-          <Dues />
-        )}
-      </main>
+      {/* === MAIN PAGE === */}
+      <div className="page">
+        {activeTab === "yarn" ? <YarnManager /> : <Dues />}
+      </div>
     </div>
   );
 }
-
-export default App;
